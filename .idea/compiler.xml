@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="bx-scheduler-store" />
+        <module name="bx-scheduler-engine" />
+        <module name="bx-scheduler-dispatcher" />
+        <module name="bx-scheduler-lock" />
+        <module name="bx-scheduler-log" />
+        <module name="bx-scheduler-scheduler" />
+        <module name="bx-scheduler-executor" />
+        <module name="bx-scheduler-client" />
+        <module name="bx-scheduler-monitor" />
+        <module name="bx-scheduler-common" />
+        <module name="bx-scheduler-idgenerator" />
+        <module name="bx-scheduler-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="bx-scheduler" target="1.8" />
+      <module name="bx-scheduler-client" target="1.8" />
+      <module name="bx-scheduler-common" target="1.8" />
+      <module name="bx-scheduler-dispatcher" target="1.8" />
+      <module name="bx-scheduler-engine" target="1.8" />
+      <module name="bx-scheduler-executor" target="1.8" />
+      <module name="bx-scheduler-idgenerator" target="1.8" />
+      <module name="bx-scheduler-lock" target="1.8" />
+      <module name="bx-scheduler-log" target="1.8" />
+      <module name="bx-scheduler-monitor" target="1.8" />
+      <module name="bx-scheduler-scheduler" target="1.8" />
+      <module name="bx-scheduler-store" target="1.8" />
+      <module name="bx-scheduler-web" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

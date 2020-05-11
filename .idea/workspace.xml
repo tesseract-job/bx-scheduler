@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="cfce6ed0-a51d-438a-8a79-f76a35dc14a5" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1bjfT9GmjvjHpJUXNcOsjv0HBSY" />
+  <component name="ProjectViewState">
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showVisibilityIcons" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/bx-scheduler-scheduler/src/main/resources" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\source\bx-scheduler\bx-scheduler-engine\src\main\resources" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.bx.scheduler.store" />
+      <recent name="org.bx.scheculer.scheduler.entity" />
+      <recent name="" />
+      <recent name="org.bx.scheduler.store.entity" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\source\bx-scheduler\bx-scheduler-scheduler\src\main\resources" />
+    </key>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cfce6ed0-a51d-438a-8a79-f76a35dc14a5" name="Default Changelist" comment="" />
+      <created>1589150428612</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1589150428612</updated>
+      <workItem from="1589150429912" duration="4598000" />
+      <workItem from="1589155215145" duration="23000" />
+      <workItem from="1589155241297" duration="2102000" />
+      <workItem from="1589164307495" duration="14779000" />
+      <workItem from="1589190428344" duration="33000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="605" y="178" key="#Project_Structure" timestamp="1589188721758">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="605" y="178" key="#Project_Structure/0.0.1920.1040@0.0.1920.1040" timestamp="1589188721758" />
+    <state x="765" y="229" key="#com.intellij.ide.util.MemberChooser" timestamp="1589189853275">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="765" y="229" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1589189853275" />
+    <state x="859" y="408" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1589155349445">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="859" y="408" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589155349445" />
+    <state x="527" y="444" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1589165397897">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="527" y="444" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589165397897" />
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1589164485310">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589164485310" />
+    <state x="793" y="274" key="FileChooserDialogImpl" timestamp="1589155283992">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="793" y="274" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1589155283992" />
+    <state x="980" y="201" key="Maven.ArtifactSearchDialog" timestamp="1589155651725">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="980" y="201" key="Maven.ArtifactSearchDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589155651725" />
+    <state x="681" y="261" width="564" height="524" key="StructurePopup" timestamp="1589167559041">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="681" y="261" width="564" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1589167559041" />
+    <state x="697" y="222" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1589189835581">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="697" y="222" key="com.intellij.testIntegration.createTest.CreateTestDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589189835581" />
+    <state x="636" y="253" width="647" height="534" key="find.popup" timestamp="1589153484260">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="636" y="253" width="647" height="534" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1589153484260" />
+    <state x="669" y="217" key="new project wizard" timestamp="1589165137019">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="669" y="217" key="new project wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1589165137019" />
+    <state x="661" y="137" key="refactoring.ChangeSignatureDialog" timestamp="1589177013861">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="661" y="137" key="refactoring.ChangeSignatureDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1589177013861" />
+    <state x="616" y="240" width="672" height="677" key="run.anything.popup" timestamp="1589185711676">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="616" y="240" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1589185711676" />
+  </component>
+</project>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/bx-scheduler.iml" filepath="$PROJECT_DIR$/.idea/bx-scheduler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-client/bx-scheduler-client.iml" filepath="$PROJECT_DIR$/bx-scheduler-client/bx-scheduler-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-common/bx-scheduler-common.iml" filepath="$PROJECT_DIR$/bx-scheduler-common/bx-scheduler-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-dispatcher/bx-scheduler-dispatcher.iml" filepath="$PROJECT_DIR$/bx-scheduler-dispatcher/bx-scheduler-dispatcher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-engine/bx-scheduler-engine.iml" filepath="$PROJECT_DIR$/bx-scheduler-engine/bx-scheduler-engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-executor/bx-scheduler-executor.iml" filepath="$PROJECT_DIR$/bx-scheduler-executor/bx-scheduler-executor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-idgenerator/bx-scheduler-idgenerator.iml" filepath="$PROJECT_DIR$/bx-scheduler-idgenerator/bx-scheduler-idgenerator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-lock/bx-scheduler-lock.iml" filepath="$PROJECT_DIR$/bx-scheduler-lock/bx-scheduler-lock.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-log/bx-scheduler-log.iml" filepath="$PROJECT_DIR$/bx-scheduler-log/bx-scheduler-log.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-monitor/bx-scheduler-monitor.iml" filepath="$PROJECT_DIR$/bx-scheduler-monitor/bx-scheduler-monitor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-scheduler/bx-scheduler-scheduler.iml" filepath="$PROJECT_DIR$/bx-scheduler-scheduler/bx-scheduler-scheduler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-store/bx-scheduler-store.iml" filepath="$PROJECT_DIR$/bx-scheduler-store/bx-scheduler-store.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bx-scheduler-web/bx-scheduler-web.iml" filepath="$PROJECT_DIR$/bx-scheduler-web/bx-scheduler-web.iml" />
+    </modules>
+  </component>
+</project>
