@@ -1,8 +1,9 @@
 package org.bx.scheduler.client;
 
-import org.bx.scheduler.common.bean.TaskExecuteInfo;
+import org.bx.scheduler.client.entity.DispatchContext;
+import org.bx.scheduler.common.lifecycle.ILifecycle;
 
 
-public interface IDispatcherClient {
-    void request(TaskExecuteInfo taskRequestInfo);
+public interface IDispatcherClient extends ILifecycle {
+    void request(DispatchContext dispatchContext) throws Exception;
 }

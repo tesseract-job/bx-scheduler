@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bx.scheculer.scheduler.entity.SchedulerContext;
 import org.bx.scheculer.scheduler.entity.SchedulerInfo;
+import org.bx.scheduler.client.ISchedulerServerDispatcher;
 import org.bx.scheduler.common.bean.TaskExecuteInfo;
 import org.bx.scheduler.common.util.BeanUtils;
-import org.bx.scheduler.dispatcher.IDispatcher;
 import org.bx.scheduler.engine.entity.SchedulerConfiguration;
 import org.bx.scheduler.executor.entity.SchedulerExecutorContext;
 import org.bx.scheduler.executor.stratege.ExecutorStrategeFactory;
-import org.bx.scheduler.executor.stratege.IExecutorStratege;
+import org.bx.scheduler.executor.stratege.ISchedulerServerExecutorStratege;
 import org.bx.scheduler.executor.threadPool.ISchedulerThreadPool;
 import org.bx.scheduler.lock.entity.SchedulerLogInfo;
 import org.bx.scheduler.store.entity.SchedulerExecutorDetailIInfo;
@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @AllArgsConstructor
-public class DefaultExecutor implements IExecutor {
+public class DefaultSchedulerServerExecutor implements ISchedulerServerExecutor {
     private ISchedulerThreadPool threadPool;
     private ExecutorService retryExecutorService;
 
@@ -35,12 +35,22 @@ public class DefaultExecutor implements IExecutor {
         threadPool.execute(new TaskWorker(schedulerContext));
     }
 
+    /**
+     * 1、检测重试次数是否到达最大次数，如果到达直接返回
+     * 2、如果未到达重试次数，新生成一个新的log
+     * 3、将旧的log 部分属性copy到新log上，新的log重试次数+1
+     * 4、重新获取一个新的执行机器（排除掉异常的机器）
+     * 5、填充schedulerExecutorContext的ContextLogInfo、ExecutorDetailIInfo
+     * 6、下发dispatcher执行
+     *
+     * @param schedulerExecutorContext 调度执行上下文
+     */
     @Override
     public void taskRetry(SchedulerExecutorContext schedulerExecutorContext) {
         int curRetryCount = schedulerExecutorContext.getRetryCount();
         final SchedulerTriggerInfo triggerInfo = schedulerExecutorContext.getSchedulerContext().getTriggerInfo();
-        final Integer retryTotal = triggerInfo.getRetryCount();
-        if (curRetryCount >= retryTotal) {
+        final Integer retryNum = triggerInfo.getRetryCount();
+        if (curRetryCount >= retryNum) {
             log.debug("retryTotal eq curRetryCount, don't retry");
             return;
         }
@@ -63,8 +73,8 @@ public class DefaultExecutor implements IExecutor {
             return;
         }
         schedulerExecutorContext.setContextLogInfo(logInfo);
-        final IExecutorStratege stratege = ExecutorStrategeFactory.createStratege(triggerInfo.getStrategy());
-        final IDispatcher dispatcher = configuration.getDispatcher();
+        final ISchedulerServerExecutorStratege stratege = ExecutorStrategeFactory.createStratege(triggerInfo.getStrategy());
+        final ISchedulerServerDispatcher dispatcher = configuration.getDispatcher();
         final SchedulerExecutorDetailIInfo schedulerExecutorDetailIInfo = stratege.selectExecutorDetail(executorDetailInfoList);
         schedulerExecutorContext.setExecutorDetailIInfo(schedulerExecutorDetailIInfo);
         dispatcher.dispatch(schedulerExecutorContext);

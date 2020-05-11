@@ -1,10 +1,12 @@
-package org.bx.scheduler.dispatcher;
+package org.bx.scheduler.client.dispatcher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bx.scheculer.scheduler.entity.SchedulerContext;
 import org.bx.scheculer.scheduler.entity.SchedulerInfo;
 import org.bx.scheduler.client.IClientPool;
 import org.bx.scheduler.client.IDispatcherClient;
+import org.bx.scheduler.client.ISchedulerServerDispatcher;
+import org.bx.scheduler.client.entity.DispatchContext;
 import org.bx.scheduler.common.bean.TaskExecuteInfo;
 import org.bx.scheduler.engine.entity.SchedulerConfiguration;
 import org.bx.scheduler.executor.entity.SchedulerExecutorContext;
@@ -16,7 +18,19 @@ import org.bx.scheduler.store.entity.SchedulerJobInfo;
 import org.bx.scheduler.store.entity.SchedulerTriggerInfo;
 
 @Slf4j
-public class DefaultDispatcher implements IDispatcher {
+public class DefaultSchedulerServerDispatcher implements ISchedulerServerDispatcher {
+    /**
+     * 1、获取到客户端连接池
+     * 2、根据executorDetailIInfo里的执行机器的套接字地址从连接池里获取到IDispatcherClient
+     * 3、构建TaskExecuteInfo下发任务
+     * 4、保存任务到正在执行的触发器store里
+     * 异常处理：
+     * 1、记录日志异常信息
+     * 2、更新日志信息
+     * 3、执行任务重试
+     *
+     * @param executorContext 执行上下文
+     */
     @Override
     public void dispatch(SchedulerExecutorContext executorContext) {
         final SchedulerConfiguration configuration = executorContext.getSchedulerContext().getSchedulerInfo().getConfiguration();
@@ -26,7 +40,10 @@ public class DefaultDispatcher implements IDispatcher {
             final IClientPool clientPool = configuration.getClientPool();
             final IDispatcherClient client = clientPool.getClient(executorDetailIInfo.getSocket());
             final TaskExecuteInfo taskRequestInfo = new TaskExecuteInfo();
-            client.request(taskRequestInfo);
+            final DispatchContext dispatchContext = new DispatchContext();
+            dispatchContext.setExecuteInfo(taskRequestInfo);
+            dispatchContext.setConfiguration(configuration);
+            client.request(dispatchContext);
             saveFiredTrigger(executorContext);
         } catch (Exception e) {
             String msg = "dispatch fail";

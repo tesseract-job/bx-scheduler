@@ -5,7 +5,7 @@ import org.bx.scheculer.scheduler.entity.SchedulerInfo;
 import org.bx.scheduler.common.bean.TaskExecuteInfo;
 import org.bx.scheduler.executor.entity.SchedulerExecutorContext;
 
-public interface IExecutor {
+public interface ISchedulerServerExecutor {
     /**
      * 调度数量
      *

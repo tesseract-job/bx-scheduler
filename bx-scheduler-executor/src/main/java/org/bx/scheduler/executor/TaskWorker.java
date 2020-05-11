@@ -2,11 +2,11 @@ package org.bx.scheduler.executor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bx.scheculer.scheduler.entity.SchedulerContext;
-import org.bx.scheduler.dispatcher.IDispatcher;
+import org.bx.scheduler.client.ISchedulerServerDispatcher;
 import org.bx.scheduler.engine.entity.SchedulerConfiguration;
 import org.bx.scheduler.executor.entity.SchedulerExecutorContext;
 import org.bx.scheduler.executor.stratege.ExecutorStrategeFactory;
-import org.bx.scheduler.executor.stratege.IExecutorStratege;
+import org.bx.scheduler.executor.stratege.ISchedulerServerExecutorStratege;
 import org.bx.scheduler.lock.ILog;
 import org.bx.scheduler.lock.entity.SchedulerLogInfo;
 import org.bx.scheduler.store.IExecutorDetailStore;
@@ -58,10 +58,17 @@ public class TaskWorker implements Runnable {
             log.debug("execute fail.log:{}", logInfo);
             return;
         }
-        final IExecutorStratege stratege = ExecutorStrategeFactory.createStratege(triggerInfo.getStrategy());
-        final List<SchedulerExecutorContext> schedulerExecutorContextList = stratege.buildSchedulerExecutorContext(triggerInfo, executorDetailInfoList, jobInfo);
-        final IDispatcher dispatcher = configuration.getDispatcher();
-        schedulerExecutorContextList.forEach(schedulerExecutorContext -> dispatcher.dispatch(schedulerExecutorContext));
+        try {
+            final ISchedulerServerExecutorStratege stratege = ExecutorStrategeFactory.createStratege(triggerInfo.getStrategy());
+            final List<SchedulerExecutorContext> schedulerExecutorContextList = stratege.buildSchedulerExecutorContext(schedulerContext, triggerInfo, executorDetailInfoList, jobInfo);
+            final ISchedulerServerDispatcher dispatcher = configuration.getDispatcher();
+            schedulerExecutorContextList.forEach(schedulerExecutorContext -> dispatcher.dispatch(schedulerExecutorContext));
+        } catch (Exception e) {
+            log.error("dispatch error:{}", e);
+            logInfo.setMsg("dispatch error");
+            logInfo.setStatus(SchedulerLogInfo.FAIL_STATUS);
+            logger.updateLog(logInfo);
+        }
     }
 
 
