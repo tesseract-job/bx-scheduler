@@ -6,10 +6,7 @@ import org.bx.scheduler.lock.IDistributeLock;
 import org.bx.scheduler.lock.WatchDog;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.*;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDistributeLock {
     private static final String SELETE_SQL_FORMAT = "select * from id_distribute_lock where lock_name=?";
     private static final String UPDATE_SQL_FORMAT = "update id_distribute_lock set expire_time=? where lock_name=?";
-    private static final String INSERT_SQL_FORMAT = "insert into id_distribute_lock(lock_name,expire_time,thread_id) values(?,?,?,?)";
+    private static final String INSERT_SQL_FORMAT = "insert into id_distribute_lock(lock_name,expire_time,thread_id) values(?,?,?)";
     private static final String DELETE_SQL_FORMAT = "delete from id_distribute_lock where lock_name=?";
     private final DataSource dataSource;
     private Connection connection;
@@ -54,12 +51,13 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
         if (connection != null) {
             throw new RuntimeException("锁不可重入");
         }
+        connection = dataSource.getConnection();
         this.key = key;
         watchDog.start();
-        connection = dataSource.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(INSERT_SQL_FORMAT)) {
             statement.setString(1, this.key);
-            statement.setLong(3, System.currentTimeMillis() + expireTimeSeconds * 1000);
+            statement.setLong(2, System.currentTimeMillis() + expireTimeSeconds * 1000);
+            statement.setString(3, key);
             while (true) {
                 try {
                     //获取锁成功
@@ -79,8 +77,12 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     private void reletAndCheck() {
-        try (PreparedStatement preparedStatement = this.connection.prepareStatement(SELETE_SQL_FORMAT);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = this.connection.prepareStatement(SELETE_SQL_FORMAT);
+            preparedStatement.setString(1, key);
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 final String thread_id = resultSet.getString("thread_id");
                 final long expire_time = resultSet.getLong("expire_time");
@@ -103,6 +105,21 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
