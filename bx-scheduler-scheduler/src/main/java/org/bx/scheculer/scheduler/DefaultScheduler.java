@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bx.scheculer.scheduler.entity.SchedulerInfo;
 import org.bx.scheduler.common.lifecycle.AbstractLifecycle;
 import org.bx.scheduler.engine.entity.SchedulerConfiguration;
-import org.bx.scheduler.executor.IExecutor;
+import org.bx.scheduler.executor.ISchedulerServerExecutor;
 import org.bx.scheduler.lock.IDistributeLock;
-import org.bx.scheduler.lock.entity.SchedulerLockInfo;
 import org.bx.scheduler.store.ITriggerStore;
 import org.bx.scheduler.store.entity.SchedulerDeptInfo;
 import org.bx.scheduler.store.entity.SchedulerTriggerInfo;
@@ -25,12 +24,10 @@ public class DefaultScheduler extends AbstractLifecycle implements IScheduler {
         final SchedulerDeptInfo deptInfo = schedulerInfo.getDeptInfo();
         final SchedulerConfiguration configuration = schedulerInfo.getConfiguration();
         final IDistributeLock lock = configuration.getLock();
-        final IExecutor executor = configuration.getExecutor();
+        final ISchedulerServerExecutor executor = configuration.getExecutor();
         final ITriggerStore triggerStore = configuration.getTriggerStore();
-        final SchedulerLockInfo schedulerLockInfo = new SchedulerLockInfo();
-        schedulerLockInfo.setIdentity(TRIGGER_LOCK_NAME);
-        schedulerLockInfo.setIdentity(deptInfo.getName());
-        lock.lock(schedulerLockInfo);
+        final String key = TRIGGER_LOCK_NAME + "-" + schedulerInfo.getDeptInfo().getName();
+        lock.lock(key);
         try {
             final List<SchedulerTriggerInfo> schedulerTriggerInfos = triggerStore.getTriggerInfoList(deptInfo.getId()
                     , caculateStartTime(configuration), caculateEndTime(configuration), executor.scheduleNum());
@@ -38,7 +35,7 @@ public class DefaultScheduler extends AbstractLifecycle implements IScheduler {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            lock.unLock(schedulerLockInfo);
+            lock.unLock(key);
         }
     }
 

@@ -2,7 +2,6 @@ package org.bx.scheduler.lock.mysql;
 
 import org.bx.scheduler.lock.AbstractDistributeLock;
 import org.bx.scheduler.lock.IDistributeLock;
-import org.bx.scheduler.lock.entity.SchedulerLockInfo;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -17,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * fu(for update)锁，可重入基于行锁，不支持行锁的无效或锁表，支持阻塞和非阻塞
  */
 public class MysqlFUDistributeLock extends AbstractDistributeLock implements IDistributeLock {
-    public static final String SELECT_SQL = "select * from fud_distribute_lock where `lock_name`=? and `identity`=? for update";
+    public static final String SELECT_SQL = "select * from fud_distribute_lock where `lock_name`=?  for update";
     private final DataSource dataSource;
     private Connection connection;
 
@@ -28,11 +27,10 @@ public class MysqlFUDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     @Override
-    public void lock(SchedulerLockInfo lockInfo) throws Exception {
+    public void lock(String key) throws Exception {
         checkConnection();
         try (PreparedStatement statement = connection.prepareStatement(SELECT_SQL)) {
-            statement.setString(1, lockInfo.getLockName());
-            statement.setString(2, lockInfo.getIdentity());
+            statement.setString(1, key);
             statement.executeQuery();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -40,10 +38,10 @@ public class MysqlFUDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     @Override
-    public boolean tryLock(SchedulerLockInfo lockInfo, long time, TimeUnit unit) throws Exception {
+    public boolean tryLock(String key, long time, TimeUnit unit) throws Exception {
         final Future<?> future = threadPoolExecutor.submit(() -> {
             try {
-                lock(lockInfo);
+                lock(key);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -57,7 +55,7 @@ public class MysqlFUDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     @Override
-    public void unLock(SchedulerLockInfo lockInfo) throws Exception {
+    public void unLock(String key) throws Exception {
         connection.commit();
         connection.close();
         connection = null;

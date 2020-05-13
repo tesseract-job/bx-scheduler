@@ -1,7 +1,6 @@
 package org.bx.scheduler.lock;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import org.bx.scheduler.lock.entity.SchedulerLockInfo;
 import org.bx.scheduler.lock.mysql.MysqlFUDistributeLock;
 import org.bx.scheduler.lock.mysql.MysqlIDDistributeLock;
 import org.junit.Before;

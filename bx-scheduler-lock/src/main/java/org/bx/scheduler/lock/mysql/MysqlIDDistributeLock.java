@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bx.scheduler.lock.AbstractDistributeLock;
 import org.bx.scheduler.lock.IDistributeLock;
 import org.bx.scheduler.lock.WatchDog;
-import org.bx.scheduler.lock.entity.SchedulerLockInfo;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -22,18 +21,17 @@ import java.util.concurrent.TimeUnit;
  * create table id_distribute_lock(
  * id int unsigned auto_increment primary key,
  * lock_name varchar(100) not null,
- * identity varchar(100) not null,
  * expire_time bigint not null,
  * thread_id varchar(100) not null,
- * unique(lock_name,identity)
+ * unique(lock_name)
  * ) engine=myisam;
  */
 @Slf4j
 public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDistributeLock {
-    private static final String SELETE_SQL_FORMAT = "select * from id_distribute_lock where lock_name=? and `identity`=?";
-    private static final String UPDATE_SQL_FORMAT = "update id_distribute_lock set expire_time=? where lock_name=? and `identity`=?";
-    private static final String INSERT_SQL_FORMAT = "insert into id_distribute_lock(lock_name,`identity`,expire_time,thread_id) values(?,?,?,?)";
-    private static final String DELETE_SQL_FORMAT = "delete from id_distribute_lock where lock_name=? and `identity`=?";
+    private static final String SELETE_SQL_FORMAT = "select * from id_distribute_lock where lock_name=?";
+    private static final String UPDATE_SQL_FORMAT = "update id_distribute_lock set expire_time=? where lock_name=?";
+    private static final String INSERT_SQL_FORMAT = "insert into id_distribute_lock(lock_name,expire_time,thread_id) values(?,?,?,?)";
+    private static final String DELETE_SQL_FORMAT = "delete from id_distribute_lock where lock_name=?";
     private final DataSource dataSource;
     private Connection connection;
     private ExecutorService threadPoolExecutor = Executors.newSingleThreadExecutor();
@@ -41,7 +39,7 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
     private long reletTime;
     private WatchDog watchDog;
     private String threadId;
-    private SchedulerLockInfo lockInfo;
+    private String key;
 
     public MysqlIDDistributeLock(DataSource dataSource, int expireTimeSeconds) {
         this.dataSource = dataSource;
@@ -52,16 +50,15 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     @Override
-    public void lock(SchedulerLockInfo lockInfo) throws Exception {
+    public void lock(String key) throws Exception {
         if (connection != null) {
             throw new RuntimeException("锁不可重入");
         }
-        this.lockInfo = lockInfo;
+        this.key = key;
         watchDog.start();
         connection = dataSource.getConnection();
         try (PreparedStatement statement = connection.prepareStatement(INSERT_SQL_FORMAT)) {
-            statement.setString(1, lockInfo.getLockName());
-            statement.setString(2, lockInfo.getIdentity());
+            statement.setString(1, this.key);
             statement.setLong(3, System.currentTimeMillis() + expireTimeSeconds * 1000);
             while (true) {
                 try {
@@ -92,8 +89,7 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
                     //续租
                     try (PreparedStatement updatePreparedStatement = this.connection.prepareStatement(UPDATE_SQL_FORMAT)) {
                         updatePreparedStatement.setLong(1, expire_time + reletTime);
-                        updatePreparedStatement.setString(2, lockInfo.getLockName());
-                        updatePreparedStatement.setString(3, lockInfo.getIdentity());
+                        updatePreparedStatement.setString(2, key);
                         updatePreparedStatement.executeUpdate();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -112,8 +108,7 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
 
     private void delete() {
         try (PreparedStatement statement = this.connection.prepareStatement(DELETE_SQL_FORMAT)) {
-            statement.setString(1, lockInfo.getLockName());
-            statement.setString(2, lockInfo.getIdentity());
+            statement.setString(1, this.key);
             statement.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -121,10 +116,10 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     @Override
-    public boolean tryLock(SchedulerLockInfo lockInfo, long time, TimeUnit unit) throws Exception {
+    public boolean tryLock(String key, long time, TimeUnit unit) throws Exception {
         final Future<?> future = threadPoolExecutor.submit(() -> {
             try {
-                lock(lockInfo);
+                lock(key);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -138,7 +133,7 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     @Override
-    public void unLock(SchedulerLockInfo lockInfo) throws Exception {
+    public void unLock(String key) throws Exception {
         watchDog.stop();
         delete();
         connection.close();
