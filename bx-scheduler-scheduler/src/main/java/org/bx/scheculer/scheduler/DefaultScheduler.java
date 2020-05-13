@@ -1,6 +1,7 @@
 package org.bx.scheculer.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.bx.scheculer.scheduler.entity.SchedulerContext;
 import org.bx.scheculer.scheduler.entity.SchedulerInfo;
 import org.bx.scheduler.common.lifecycle.AbstractLifecycle;
 import org.bx.scheduler.engine.entity.SchedulerConfiguration;
@@ -10,9 +11,9 @@ import org.bx.scheduler.store.ITriggerStore;
 import org.bx.scheduler.store.entity.SchedulerDeptInfo;
 import org.bx.scheduler.store.entity.SchedulerTriggerInfo;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
-
-import static org.bx.scheduler.common.util.CommonUtis.createSchedulerContext;
 
 @Slf4j
 public class DefaultScheduler extends AbstractLifecycle implements IScheduler {
@@ -31,7 +32,23 @@ public class DefaultScheduler extends AbstractLifecycle implements IScheduler {
         try {
             final List<SchedulerTriggerInfo> schedulerTriggerInfos = triggerStore.getTriggerInfoList(deptInfo.getId()
                     , caculateStartTime(configuration), caculateEndTime(configuration), executor.scheduleNum());
-            schedulerTriggerInfos.forEach(triggerInfo -> executor.execute(createSchedulerContext(configuration, schedulerInfo, triggerInfo)));
+            schedulerTriggerInfos.forEach(triggerInfo -> {
+                //更新下一次執行時間
+                //构建cron计算器
+                CronExpression cronExpression;
+                try {
+                    cronExpression = new CronExpression(triggerInfo.getCron());
+                } catch (ParseException e) {
+                    log.error("创建CronExpression出错:{},异常信息:{}", triggerInfo, e.getMessage());
+                    return;
+                }
+                SchedulerTriggerInfo updateTrigger = new SchedulerTriggerInfo();
+                updateTrigger.setId(triggerInfo.getId());
+                updateTrigger.setNextTriggerTime(cronExpression.getTimeAfter(new Date()).getTime());
+                updateTrigger.setPrevTriggerTime(System.currentTimeMillis());
+                triggerStore.updateSchedulerTriggerInfo(updateTrigger);
+                executor.execute(SchedulerContext.createSchedulerContext(configuration, schedulerInfo, triggerInfo));
+            });
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

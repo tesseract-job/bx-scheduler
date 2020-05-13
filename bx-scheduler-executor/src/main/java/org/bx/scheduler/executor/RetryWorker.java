@@ -1,5 +1,6 @@
 package org.bx.scheduler.executor;
 
+import org.bx.scheculer.scheduler.entity.SchedulerContext;
 import org.bx.scheculer.scheduler.entity.SchedulerInfo;
 import org.bx.scheduler.common.bean.TaskExecuteInfo;
 import org.bx.scheduler.common.util.CommonUtis;
@@ -39,7 +40,7 @@ public class RetryWorker implements Runnable {
             throw new RuntimeException("jobInfo is null,stop retry");
         }
         final SchedulerExecutorContext executorContext = new SchedulerExecutorContext();
-        executorContext.setSchedulerContext(CommonUtis.createSchedulerContext(configuration, schedulerInfo, triggerInfo));
+        executorContext.setSchedulerContext(SchedulerContext.createSchedulerContext(configuration, schedulerInfo, triggerInfo));
         final SchedulerExecutorDetailIInfo executorDetailIInfo = new SchedulerExecutorDetailIInfo();
         executorDetailIInfo.setId(schedulerLogInfo.getExecutorDetailId());
         /**
