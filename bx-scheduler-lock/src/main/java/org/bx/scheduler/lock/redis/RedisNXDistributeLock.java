@@ -12,7 +12,18 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * redis 单节点锁，基于NX
+ * redis 单节点锁，基于NX,不支持锁重入
+ * if (redis.call('exists', KEYS[1]) == 0) then " +
+ * "redis.call('hincrby', KEYS[1], ARGV[2], 1); " +
+ * "redis.call('pexpire', KEYS[1], ARGV[1]); " +
+ * "return nil; " +
+ * "end; " +
+ * "if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then " +
+ * "redis.call('hincrby', KEYS[1], ARGV[2], 1); " +
+ * "redis.call('pexpire', KEYS[1], ARGV[1]); " +
+ * "return nil; " +
+ * "end; " +
+ * "return redis.call('pttl', KEYS[1]);",
  */
 @Slf4j
 public class RedisNXDistributeLock extends AbstractDistributeLock {
@@ -20,34 +31,50 @@ public class RedisNXDistributeLock extends AbstractDistributeLock {
     private static final String SET_IF_NOT_EXIST = "NX";
     private static final String SET_WITH_EXPIRE_TIME = "PX";
     private JedisPool jedisPool;
-    //毫秒
     private long expireTime;
+    private long reletTime;
+    private long pollTime;
     private String requestId;
     private ExecutorService threadPoolExecutor = Executors.newSingleThreadExecutor();
 
-    public RedisNXDistributeLock(JedisPool jedisPool, long expireTime, String requestId) {
+    public RedisNXDistributeLock(JedisPool jedisPool, int expireTime, String requestId, String lockName) {
+        this(jedisPool, expireTime, -1, 100, requestId, lockName);
+    }
+
+    public RedisNXDistributeLock(JedisPool jedisPool, int expireTime, long pollTime, String requestId, String lockName) {
+        this(jedisPool, expireTime, expireTime / 2, pollTime, requestId, lockName);
+    }
+
+    public RedisNXDistributeLock(JedisPool jedisPool, int expireTime, long reletTime, long pollTime, String requestId, String lockName) {
+        super(lockName);
         this.jedisPool = jedisPool;
-        this.expireTime = expireTime;
+        this.expireTime = expireTime * 1000;
         this.requestId = requestId;
+        this.reletTime = reletTime;
+        this.pollTime = pollTime;
     }
 
     @Override
-    public void lock(String key) throws Exception {
+    public void lock() {
         final Jedis client = jedisPool.getResource();
         for (; ; ) {
-            final String resp = client.set(key, requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
+            final String resp = client.set(this.lockName(), requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
             if (LOCK_SUCCESS.equals(resp)) {
                 client.close();
                 break;
             }
-            Thread.sleep(1000);
+            try {
+                Thread.sleep(pollTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
-    public boolean trylock(String key) throws Exception {
+    public boolean tryLock(){
         final Jedis client = jedisPool.getResource();
-        final String resp = client.set(key, requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
+        final String resp = client.set(this.lockName(), requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
         if (LOCK_SUCCESS.equals(resp)) {
             return true;
         }
@@ -55,10 +82,10 @@ public class RedisNXDistributeLock extends AbstractDistributeLock {
     }
 
     @Override
-    public boolean tryLock(String key, long time, TimeUnit unit) throws Exception {
+    public boolean tryLock( long time, TimeUnit unit) {
         final Future<?> future = threadPoolExecutor.submit(() -> {
             try {
-                lock(key);
+                lock();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -72,10 +99,10 @@ public class RedisNXDistributeLock extends AbstractDistributeLock {
     }
 
     @Override
-    public void unLock(String key) throws Exception {
+    public void unlock() {
         final Jedis client = jedisPool.getResource();
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-        client.eval(script, Collections.singletonList(key), Collections.singletonList(requestId));
+        client.eval(script, Collections.singletonList(this.lockName()), Collections.singletonList(requestId));
         client.close();
     }
 }

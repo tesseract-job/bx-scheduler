@@ -1,12 +1,12 @@
 package org.bx.scheduler.lock.mysql;
 
+import lombok.SneakyThrows;
 import org.bx.scheduler.lock.AbstractDistributeLock;
 import org.bx.scheduler.lock.IDistributeLock;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -18,30 +18,38 @@ import java.util.concurrent.TimeUnit;
 public class MysqlFUDistributeLock extends AbstractDistributeLock implements IDistributeLock {
     public static final String SELECT_SQL = "select * from fud_distribute_lock where `lock_name`=?  for update";
     private final DataSource dataSource;
+    private ExecutorService threadPoolExecutor = Executors.newSingleThreadExecutor();
     private Connection connection;
 
-    private ExecutorService threadPoolExecutor = Executors.newSingleThreadExecutor();
-
-    public MysqlFUDistributeLock(DataSource dataSource) {
+    public MysqlFUDistributeLock(DataSource dataSource, String lockName) {
+        super(lockName);
         this.dataSource = dataSource;
     }
 
+    @SneakyThrows
     @Override
-    public void lock(String key) throws Exception {
-        checkConnection();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_SQL)) {
-            statement.setString(1, key);
-            statement.executeQuery();
+    public void lock() {
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(SELECT_SQL)) {
+                statement.setString(1, lockName());
+                statement.executeQuery();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 
     @Override
-    public boolean tryLock(String key, long time, TimeUnit unit) throws Exception {
+    public boolean tryLock(long time, TimeUnit unit) {
         final Future<?> future = threadPoolExecutor.submit(() -> {
             try {
-                lock(key);
+                lock();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -54,18 +62,13 @@ public class MysqlFUDistributeLock extends AbstractDistributeLock implements IDi
         }
     }
 
+    @SneakyThrows
     @Override
-    public void unLock(String key) throws Exception {
+    public void unlock() {
         connection.commit();
         connection.close();
         connection = null;
     }
 
 
-    private void checkConnection() throws SQLException {
-        if (connection == null) {
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
-        }
-    }
 }

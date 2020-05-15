@@ -13,11 +13,11 @@ public class WatchDog {
         this.target = target;
         this.thread = new Thread(() -> {
             while (!isStop) {
-                this.target.run();
                 try {
                     Thread.sleep(this.watchTime);
                 } catch (InterruptedException e) {
                 }
+                this.target.run();
             }
         }, "lock-watch-dog");
     }

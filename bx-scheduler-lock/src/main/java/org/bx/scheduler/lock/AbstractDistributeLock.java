@@ -1,25 +1,47 @@
 package org.bx.scheduler.lock;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 
-public abstract class AbstractDistributeLock implements IDistributeLock {
+public class AbstractDistributeLock implements IDistributeLock {
+    protected String lockName;
+
+    public AbstractDistributeLock(String lockName) {
+        this.lockName = lockName;
+    }
+
     @Override
-    public void lock(String key) throws Exception {
+    public String lockName() {
+        return this.lockName;
+    }
+
+    @Override
+    public void lock() {
         throw new RuntimeException("not support method");
     }
 
     @Override
-    public boolean trylock(String key) throws Exception {
+    public void lockInterruptibly() throws InterruptedException {
         throw new RuntimeException("not support method");
     }
 
     @Override
-    public boolean tryLock(String key, long time, TimeUnit unit) throws Exception {
+    public boolean tryLock() {
         throw new RuntimeException("not support method");
     }
 
     @Override
-    public void unLock(String key) throws Exception {
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+        throw new RuntimeException("not support method");
+    }
+
+    @Override
+    public void unlock() {
+        throw new RuntimeException("not support method");
+    }
+
+    @Override
+    public Condition newCondition() {
         throw new RuntimeException("not support method");
     }
 }

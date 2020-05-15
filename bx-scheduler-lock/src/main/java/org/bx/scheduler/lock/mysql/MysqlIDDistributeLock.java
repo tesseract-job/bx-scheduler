@@ -31,29 +31,28 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
     private static final String DELETE_SQL_FORMAT = "delete from id_distribute_lock where lock_name=?";
     private final DataSource dataSource;
     private ExecutorService threadPoolExecutor = Executors.newSingleThreadExecutor();
-    private int expireTimeSeconds;
+    private int expireTime;
     private long reletTime;
     private WatchDog watchDog;
     private String threadId;
-    private String key;
 
-    public MysqlIDDistributeLock(DataSource dataSource, int expireTimeSeconds) {
+    public MysqlIDDistributeLock(DataSource dataSource, int expireTime, String lockName) {
+        super(lockName);
         this.dataSource = dataSource;
-        this.expireTimeSeconds = expireTimeSeconds;
-        this.reletTime = (int) ((this.expireTimeSeconds / 2d) * 1000);
+        this.expireTime = expireTime;
+        this.reletTime = this.expireTime / 2;
         threadId = Thread.currentThread().getId() + "-" + UUID.randomUUID().toString();
         watchDog = new WatchDog(() -> reletAndCheck(), reletTime, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public void lock(String key) throws Exception {
-        this.key = key;
+    public void lock() {
         watchDog.start();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT_SQL_FORMAT)) {
-            statement.setString(1, this.key);
-            statement.setLong(2, System.currentTimeMillis() + expireTimeSeconds * 1000);
-            statement.setString(3, key);
+            statement.setString(1, this.lockName());
+            statement.setLong(2, System.currentTimeMillis() + expireTime);
+            statement.setString(3, this.lockName());
             while (true) {
                 try {
                     //获取锁成功
@@ -78,7 +77,7 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
         try {
             final Connection connection = dataSource.getConnection();
             preparedStatement = connection.prepareStatement(SELETE_SQL_FORMAT);
-            preparedStatement.setString(1, key);
+            preparedStatement.setString(1, this.lockName());
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 final String thread_id = resultSet.getString("thread_id");
@@ -88,7 +87,7 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
                     //续租
                     try (PreparedStatement updatePreparedStatement = connection.prepareStatement(UPDATE_SQL_FORMAT)) {
                         updatePreparedStatement.setLong(1, expire_time + reletTime);
-                        updatePreparedStatement.setString(2, key);
+                        updatePreparedStatement.setString(2, this.lockName());
                         updatePreparedStatement.executeUpdate();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -122,7 +121,7 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
 
     private void delete() {
         try (PreparedStatement statement = this.dataSource.getConnection().prepareStatement(DELETE_SQL_FORMAT)) {
-            statement.setString(1, this.key);
+            statement.setString(1, this.lockName());
             statement.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -130,10 +129,10 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     @Override
-    public boolean tryLock(String key, long time, TimeUnit unit) throws Exception {
+    public boolean tryLock(long time, TimeUnit unit) {
         final Future<?> future = threadPoolExecutor.submit(() -> {
             try {
-                lock(key);
+                lock();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -147,7 +146,7 @@ public class MysqlIDDistributeLock extends AbstractDistributeLock implements IDi
     }
 
     @Override
-    public void unLock(String key) throws Exception {
+    public void unlock() {
         watchDog.stop();
         delete();
     }
