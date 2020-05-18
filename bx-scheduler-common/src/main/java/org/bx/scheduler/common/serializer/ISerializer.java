@@ -13,7 +13,8 @@ public interface ISerializer {
      * 反序列化
      *
      * @param bytes
+     * @param clazz
      * @return
      */
-    Object deserialize(byte[] bytes);
+    <T> T deserialize(byte[] bytes, Class<T> clazz);
 }

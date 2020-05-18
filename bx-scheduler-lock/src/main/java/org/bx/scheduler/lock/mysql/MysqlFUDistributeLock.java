@@ -50,12 +50,17 @@ public class MysqlFUDistributeLock extends AbstractDistributeLock implements IDi
         final Future<?> future = threadPoolExecutor.submit(() -> {
             try {
                 lock();
+                return 1;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
         try {
-            future.get(time, unit);
+            final Object o = future.get(time, unit);
+            if (o == null) {
+                future.cancel(true);
+                return false;
+            }
             return true;
         } catch (Exception e) {
             return false;

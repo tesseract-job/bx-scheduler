@@ -29,6 +29,6 @@ public class SchedulerConfiguration {
     private IClientPool clientPool;
     private IFiredJobInfoStore firedJobInfoStore;
     private IScheduler scheduler;
-    private IClientPool clientPool;
     private ISerializer serializer;
+    private int engineServerPort;
 }

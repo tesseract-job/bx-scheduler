@@ -9,7 +9,7 @@ public class JSONSerializer implements ISerializer {
     }
 
     @Override
-    public Object deserialize(byte[] bytes) {
-        return JSON.parse(bytes);
+    public <T> T deserialize(byte[] bytes, Class<T> clazz) {
+        return JSON.parseObject(bytes, clazz);
     }
 }
