@@ -53,9 +53,9 @@ public class LockTest {
         int[] count = {0};
         for (int i = 0; i < 1000; i++) {
             executorService.submit(() -> {
-                final MysqlFUDistributeLock lock = new MysqlFUDistributeLock(dataSource);
+                final MysqlFUDistributeLock lock = new MysqlFUDistributeLock(dataSource, key);
                 try {
-                    lock.lock(key);
+                    lock.lock();
 //                    if (lock.tryLock(schedulerLockInfo, 1000, TimeUnit.MILLISECONDS)) {
                     count[0]++;
 //                    }
@@ -63,7 +63,7 @@ public class LockTest {
                     e.printStackTrace();
                 } finally {
                     try {
-                        lock.unLock(key);
+                        lock.unlock();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -81,9 +81,9 @@ public class LockTest {
 
         for (int i = 0; i < 1000; i++) {
             executorService.submit(() -> {
-                final MysqlIDDistributeLock lock = new MysqlIDDistributeLock(dataSource, 10);
+                final MysqlIDDistributeLock lock = new MysqlIDDistributeLock(dataSource, 10, key);
                 try {
-                    lock.lock(key);
+                    lock.lock();
 //                    if (lock.tryLock(schedulerLockInfo, 1000, TimeUnit.MILLISECONDS)) {
                     count[0]++;
 //                    }
@@ -91,7 +91,7 @@ public class LockTest {
                     e.printStackTrace();
                 } finally {
                     try {
-                        lock.unLock(key);
+                        lock.unlock();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -119,10 +119,10 @@ public class LockTest {
         final AtomicInteger atomicInteger = new AtomicInteger();
         for (int i = 0; i < 1000; i++) {
             executorService.submit(() -> {
-                final RedisNXDistributeLock lock = new RedisNXDistributeLock(jedisPool, 3 * 1000L,
-                        atomicInteger.getAndIncrement() + "");
+                final RedisNXDistributeLock lock = new RedisNXDistributeLock(jedisPool, 3 * 1000,
+                        atomicInteger.getAndIncrement() + "", key);
                 try {
-                    lock.lock(key);
+                    lock.lock();
 //                    if (lock.tryLock(schedulerLockInfo, 1000, TimeUnit.MILLISECONDS)) {
                     count[0]++;
 //                    }
@@ -130,7 +130,7 @@ public class LockTest {
                     e.printStackTrace();
                 } finally {
                     try {
-                        lock.unLock(key);
+                        lock.unlock();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
