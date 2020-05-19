@@ -1,17 +1,17 @@
-package org.bx.scheduler.engine.server.http;
+package org.bx.scheduler.client.server.http;
 
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.bx.scheduler.client.entity.ClientConfiguration;
+import org.bx.scheduler.client.server.HandleContext;
+import org.bx.scheduler.client.server.handler.ITaskHandler;
 import org.bx.scheduler.common.bean.ClientHeartbeatInfo;
 import org.bx.scheduler.common.bean.InfoWrapper;
 import org.bx.scheduler.common.serializer.ISerializer;
 import org.bx.scheduler.common.util.HttpUtils;
-import org.bx.scheduler.engine.entity.SchedulerConfiguration;
-import org.bx.scheduler.engine.server.HandleContext;
-import org.bx.scheduler.engine.server.handler.ITaskHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +26,10 @@ public class HttpDispatcher extends ChannelInboundHandlerAdapter {
 
     }
 
-    private SchedulerConfiguration configuration;
+    private ClientConfiguration configuration;
 
 
-    public HttpDispatcher(SchedulerConfiguration configuration) {
+    public HttpDispatcher(ClientConfiguration configuration) {
         this.configuration = configuration;
     }
 

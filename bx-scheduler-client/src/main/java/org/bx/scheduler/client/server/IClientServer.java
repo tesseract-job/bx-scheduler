@@ -1,4 +1,4 @@
-package org.bx.scheduler.client;
+package org.bx.scheduler.client.server;
 
 import org.bx.scheduler.common.lifecycle.ILifecycle;
 

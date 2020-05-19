@@ -1,4 +1,4 @@
-package org.bx.scheduler.client;
+package org.bx.scheduler.client.executor;
 
 import org.bx.scheduler.common.bean.TaskExecuteInfo;
 
