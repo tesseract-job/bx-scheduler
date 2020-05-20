@@ -1,4 +1,4 @@
-package org.bx.scheduler.engine.entity;
+package org.bx.scheduler.entity;
 
 import lombok.Data;
 import org.bx.scheduler.common.serializer.ISerializer;

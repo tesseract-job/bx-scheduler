@@ -12,7 +12,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.bx.scheduler.common.lifecycle.AbstractLifecycle;
-import org.bx.scheduler.engine.entity.SchedulerConfiguration;
+import org.bx.scheduler.entity.SchedulerConfiguration;
 import org.bx.scheduler.server.IEngineServer;
 
 @Slf4j

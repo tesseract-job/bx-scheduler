@@ -7,7 +7,7 @@ import org.bx.scheduler.scheduler.entity.SchedulerInfo;
 import org.bx.scheduler.dispatcher.ISchedulerServerDispatcher;
 import org.bx.scheduler.common.bean.TaskExecuteInfo;
 import org.bx.scheduler.common.util.BeanUtils;
-import org.bx.scheduler.engine.entity.SchedulerConfiguration;
+import org.bx.scheduler.entity.SchedulerConfiguration;
 import org.bx.scheduler.executor.entity.SchedulerExecutorContext;
 import org.bx.scheduler.executor.stratege.ExecutorStrategeFactory;
 import org.bx.scheduler.executor.stratege.ISchedulerServerExecutorStratege;

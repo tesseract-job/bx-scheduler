@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ClientHeartbeatInfo {
-    private int status;
-    private String msg;
+    private String host;
+    private int port;
 }

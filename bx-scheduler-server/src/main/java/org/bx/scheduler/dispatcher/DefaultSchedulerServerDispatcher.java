@@ -3,7 +3,7 @@ package org.bx.scheduler.dispatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.bx.scheduler.common.bean.TaskExecuteInfo;
 import org.bx.scheduler.dispatcher.entity.DispatchContext;
-import org.bx.scheduler.engine.entity.SchedulerConfiguration;
+import org.bx.scheduler.entity.SchedulerConfiguration;
 import org.bx.scheduler.executor.entity.SchedulerExecutorContext;
 import org.bx.scheduler.log.entity.SchedulerLogInfo;
 import org.bx.scheduler.scheduler.entity.SchedulerContext;

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class InfoWrapper {
-    private Object info;
-    private String handler;
+public class ClientRegisterRespInfo {
+    private int status;
+    private String msg;
 }

@@ -3,7 +3,7 @@ package org.bx.scheduler.executor;
 import lombok.extern.slf4j.Slf4j;
 import org.bx.scheduler.scheduler.entity.SchedulerContext;
 import org.bx.scheduler.dispatcher.ISchedulerServerDispatcher;
-import org.bx.scheduler.engine.entity.SchedulerConfiguration;
+import org.bx.scheduler.entity.SchedulerConfiguration;
 import org.bx.scheduler.executor.entity.SchedulerExecutorContext;
 import org.bx.scheduler.executor.stratege.ExecutorStrategeFactory;
 import org.bx.scheduler.executor.stratege.ISchedulerServerExecutorStratege;

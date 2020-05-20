@@ -3,7 +3,7 @@ package org.bx.scheduler.executor;
 import org.bx.scheduler.scheduler.entity.SchedulerContext;
 import org.bx.scheduler.scheduler.entity.SchedulerInfo;
 import org.bx.scheduler.common.bean.TaskExecuteInfo;
-import org.bx.scheduler.engine.entity.SchedulerConfiguration;
+import org.bx.scheduler.entity.SchedulerConfiguration;
 import org.bx.scheduler.executor.entity.SchedulerExecutorContext;
 import org.bx.scheduler.log.ILog;
 import org.bx.scheduler.log.entity.SchedulerLogInfo;

@@ -2,7 +2,7 @@ package org.bx.scheduler.scheduler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bx.scheduler.common.lifecycle.AbstractLifecycle;
-import org.bx.scheduler.engine.entity.SchedulerConfiguration;
+import org.bx.scheduler.entity.SchedulerConfiguration;
 import org.bx.scheduler.executor.ISchedulerServerExecutor;
 import org.bx.scheduler.log.IDistributeLock;
 import org.bx.scheduler.log.mysql.MysqlFUDistributeLock;

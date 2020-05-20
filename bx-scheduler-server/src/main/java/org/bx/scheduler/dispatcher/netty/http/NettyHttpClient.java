@@ -10,7 +10,7 @@ import org.bx.scheduler.common.lifecycle.AbstractLifecycle;
 import org.bx.scheduler.common.util.HttpUtils;
 import org.bx.scheduler.dispatcher.IDispatcherClient;
 import org.bx.scheduler.dispatcher.entity.DispatchContext;
-import org.bx.scheduler.engine.entity.SchedulerConfiguration;
+import org.bx.scheduler.entity.SchedulerConfiguration;
 
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,12 +32,10 @@ public class NettyHttpClient extends AbstractLifecycle implements IDispatcherCli
 
     @Override
     public void request(DispatchContext dispatchContext) throws Exception {
-        final InfoWrapper infoWrapper = new InfoWrapper();
         final TaskExecuteInfo executeInfo = dispatchContext.getExecuteInfo();
         final String futureId = futureIdAtomic.getAndIncrement() + "";
         executeInfo.setFutureId(futureId);
-        infoWrapper.setInfo(executeInfo);
-        infoWrapper.setHandler(TASK_EXECUTE_HANDLE);
+        final InfoWrapper infoWrapper = new InfoWrapper(executeInfo, TASK_EXECUTE_HANDLE);
         log.info("start dispatch task:{}", infoWrapper);
         final SchedulerConfiguration configuration = dispatchContext.getConfiguration();
         final URI uri = URI.create(socket);

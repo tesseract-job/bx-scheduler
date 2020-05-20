@@ -37,7 +37,7 @@ public class NettyHttpBuddy extends AbstractLifecycle implements IClientBuddy {
             throw new RuntimeException("registerInfoList is null");
         }
         final URI localURI = clientConfiguration.getLocalURI();
-        final RegisterInfo registerInfo = new RegisterInfo(localURI.getHost(), localURI.getPort(), taskInfoList);
+        final ClientRegisterInfo registerInfo = new ClientRegisterInfo(localURI.getHost(), localURI.getPort(), taskInfoList);
         final InfoWrapper infoWrapper = new InfoWrapper();
         infoWrapper.setHandler(HEARTBEAT_HANDLE);
         infoWrapper.setInfo(registerInfo);
