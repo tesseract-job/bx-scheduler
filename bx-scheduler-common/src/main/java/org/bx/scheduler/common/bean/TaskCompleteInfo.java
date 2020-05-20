@@ -7,4 +7,6 @@ public class TaskCompleteInfo {
     private TaskExecuteInfo executeInfo;
     private String exception;
     private double loadFactor;
+    private String host;
+    private int port;
 }

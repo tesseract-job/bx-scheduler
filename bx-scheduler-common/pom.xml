@@ -12,24 +12,19 @@
     <artifactId>bx-scheduler-common</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.bx</groupId>
-            <artifactId>bx-scheduler-executor</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.bx</groupId>
-            <artifactId>bx-scheduler-scheduler</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

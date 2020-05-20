@@ -14,12 +14,8 @@
     </properties>
     <modules>
         <module>bx-scheduler-web</module>
-        <module>bx-scheduler-engine</module>
-        <module>bx-scheduler-scheduler</module>
-        <module>bx-scheduler-executor</module>
+        <module>bx-scheduler-server</module>
         <module>bx-scheduler-monitor</module>
-        <module>bx-scheduler-dispatcher</module>
-        <module>bx-scheduler-log</module>
         <module>bx-scheduler-client</module>
         <module>bx-scheduler-common</module>
         <module>bx-scheduler-lock</module>
